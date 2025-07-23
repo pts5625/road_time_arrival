@@ -104,24 +104,45 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_st
 model.fit(X_train, y_train)
 
 y_pred = model.predict(X_val)
-from sklearn.metrics import root_mean_squared_error
+from sklearn.metrics import root_mean_squared_error, r2_score
+r2_scores = r2_score(y_val, y_pred)
+
 rmse = root_mean_squared_error(y_val, y_pred)
 print(f"RMSE: {rmse}")
 
+from sklearn.ensemble import RandomForestRegressor
+
+rf_parameters = {
+    'n_estimators': 100,
+    'random_state': 42
+}
+rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+rf_pred = rf_model.predict(X_val)
+rf_rmse = root_mean_squared_error(y_val, rf_pred)
+rf_r2_score = r2_score(y_val, rf_pred)
+
 import dagshub
+import mlflow
 dagshub.init(repo_owner='pts5625', repo_name='road_time_arrival', mlflow=True)
 
 mlflow.set_experiment('road_time_arrival')
 mlflow.set_tracking_uri('https://dagshub.com/pts5625/road_time_arrival.mlflow')
 
-import mlflow
+
 with mlflow.start_run():
+
     mlflow.set_tag("developer", "pts5625")
     
     mlflow.log_param("alpha", parameters['alpha'])
     mlflow.log_param("l1_ratio", parameters['l1_ratio'])
+    mlflow.log_param("n_estimators", rf_parameters['n_estimators'])
+    mlflow.log_param("random_state", rf_parameters['random_state'])
     
     mlflow.log_metric("rmse", rmse)
-    
+    mlflow.log_metric("r2_score", r2_scores)
+    mlflow.log_metric("rf_rmse", rf_rmse)
+    mlflow.log_metric("rf_r2_score", rf_r2_score)
+
     mlflow.sklearn.log_model(model, "model")
 
