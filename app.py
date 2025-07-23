@@ -105,7 +105,7 @@ model.fit(X_train, y_train)
 
 y_pred = model.predict(X_val)
 from sklearn.metrics import root_mean_squared_error
-rmse = root_mean_squared_error(y_val, y_pred, squared=False)
+rmse = root_mean_squared_error(y_val, y_pred)
 print(f"RMSE: {rmse}")
 
 import dagshub
@@ -124,4 +124,4 @@ with mlflow.start_run():
     mlflow.log_metric("rmse", rmse)
     
     mlflow.sklearn.log_model(model, "model")
-    
+
