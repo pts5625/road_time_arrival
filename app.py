@@ -108,3 +108,20 @@ from sklearn.metrics import root_mean_squared_error
 rmse = root_mean_squared_error(y_val, y_pred, squared=False)
 print(f"RMSE: {rmse}")
 
+import dagshub
+dagshub.init(repo_owner='pts5625', repo_name='road_time_arrival', mlflow=True)
+
+mlflow.set_experiment('road_time_arrival')
+mlflow.set_tracking_uri('https://dagshub.com/pts5625/road_time_arrival.mlflow')
+
+import mlflow
+with mlflow.start_run():
+    mlflow.set_tag("developer", "pts5625")
+    
+    mlflow.log_param("alpha", parameters['alpha'])
+    mlflow.log_param("l1_ratio", parameters['l1_ratio'])
+    
+    mlflow.log_metric("rmse", rmse)
+    
+    mlflow.sklearn.log_model(model, "model")
+    
