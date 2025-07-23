@@ -8,3 +8,14 @@ scikit-learn
 tensorflow
 xgboost
 lightgbm
+python-box
+pyYAML
+ensure
+tqdm
+joblib
+Flask
+Flask-cors
+scipy
+types-pyYAML
+gdown
+-e .
